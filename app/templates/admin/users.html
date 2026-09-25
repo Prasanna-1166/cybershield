@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin</a> · Users</p>
+    <h1 class="h2 mb-4">Manage Users</h1>
+    <div class="card cs-card">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                        <td><span class="badge text-bg-secondary">{{ u.role.name }}</span></td>
+                        <td>
+                            {% if u.is_active_account %}<span class="badge text-bg-success">Active</span>
+                            {% else %}<span class="badge text-bg-secondary">Deactivated</span>{% endif %}
+                        </td>
+                        <td class="text-muted small">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                    {{ 'Deactivate' if u.is_active_account else 'Reactivate' }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center text-muted py-4">No users yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

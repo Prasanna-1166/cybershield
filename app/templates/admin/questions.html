@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Manage Assessment Questions{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin</a> · Assessment Questions</p>
+    <h1 class="h2 mb-4">Assessment Questions</h1>
+    <div class="card cs-card">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Question</th><th>Category</th><th>Active</th><th></th></tr></thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr>
+                        <td>{{ q.text[:70] }}{{ '…' if q.text|length > 70 else '' }}</td>
+                        <td><span class="badge text-bg-secondary">{{ q.category }}</span></td>
+                        <td>{% if q.is_active %}<span class="badge text-bg-success">Yes</span>{% else %}<span class="badge text-bg-secondary">No</span>{% endif %}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.toggle_question_active', question_id=q.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">{{ 'Deactivate' if q.is_active else 'Activate' }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="text-center text-muted py-4">No questions yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

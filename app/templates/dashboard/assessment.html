@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Before' if phase == 'before' else 'After' }} Assessment{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Assessment</p>
+    <h1 class="h2">{{ 'Before' if phase == 'before' else 'After' }} Training Assessment</h1>
+    <div class="d-flex align-items-center gap-2 small text-muted mb-4 flex-wrap">
+        <span class="fw-semibold {{ 'text-decoration-underline' if phase == 'before' else '' }}" style="color: var(--cs-text);">Before Training</span>
+        <span>→</span>
+        <span>CyberShield Training</span>
+        <span>→</span>
+        <span class="fw-semibold {{ 'text-decoration-underline' if phase == 'after' else '' }}" style="color: var(--cs-text);">After Training</span>
+    </div>
+    <p class="text-muted">Answer honestly — this measures your cybersecurity awareness {{ 'before' if phase == 'before' else 'after' }} training.</p>
+
+    {% if not questions %}
+    <div class="alert alert-secondary">No assessment questions are seeded yet.</div>
+    {% else %}
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for q in questions %}
+        <div class="card cs-card mb-3">
+            <div class="card-body p-4">
+                <p class="fw-semibold">{{ loop.index }}. {{ q.text }}</p>
+                <fieldset>
+                    <legend class="visually-hidden">{{ q.text }}</legend>
+                    {% for option in q.options %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" id="q{{ q.id }}_{{ option.id }}" value="{{ option.id }}" required>
+                        <label class="form-check-label" for="q{{ q.id }}_{{ option.id }}">{{ option.text }}</label>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn cs-btn-accent">Submit Assessment</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

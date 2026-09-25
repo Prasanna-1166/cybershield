@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Account</p>
+    <h1 class="h2 mb-4">Profile</h1>
+    <div class="card cs-card">
+        <div class="card-body p-4">
+            <dl class="row mb-4">
+                <dt class="col-4 text-muted fw-normal">Username</dt><dd class="col-8">{{ user.username }}</dd>
+                <dt class="col-4 text-muted fw-normal">Role</dt><dd class="col-8">{{ user.role.name }}</dd>
+                <dt class="col-4 text-muted fw-normal">Member since</dt><dd class="col-8">{{ user.created_at.strftime('%Y-%m-%d') }}</dd>
+            </dl>
+
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="display_name" class="form-label">Display name</label>
+                <input type="text" id="display_name" name="display_name" class="form-control mb-1" maxlength="50" value="{{ user.display_name or '' }}">
+                <div class="form-text mb-3">Shown on the leaderboard instead of your username.</div>
+                <button type="submit" class="btn cs-btn-accent">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

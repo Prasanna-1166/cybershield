@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">About</p>
+    <h1 class="h2">About CyberShield</h1>
+    <p class="lead text-muted">CyberShield is a cybersecurity assistance and awareness platform — not just a game.</p>
+    <p>
+        Its gamified training module teaches users to recognize threats such as phishing, suspicious
+        URLs, weak passwords, and social-engineering scams. Its detection modules (Message Analyzer,
+        URL Safety Checker) provide practical, on-demand analysis. Its response modules (Cyber Help
+        Center, Incident Response Wizard) provide clear next-step guidance and point users to official
+        reporting resources when something has already gone wrong.
+    </p>
+    <h2 class="h4 mt-4">The problem</h2>
+    <p>
+        Most people know scams exist in general but still struggle to recognize a realistic attempt
+        in the moment. And when someone does suspect a scam — or has already clicked a link or shared
+        information — they often don't know what to do next. CyberShield addresses both gaps, and
+        measures the difference with a Before/After assessment rather than asking you to take its
+        word for it.
+    </p>
+    <h2 class="h4 mt-4">What's inside</h2>
+    <ul>
+        <li>5 gamified training levels with server-side scoring, hints, streaks, and badges</li>
+        <li>A rule-based Message Analyzer and URL Safety Checker — no external APIs, nothing you submit ever leaves this server</li>
+        <li>A Cyber Help Center and step-by-step Incident Response Wizard</li>
+        <li>A Learning Center, a measured Before/After assessment, and a personalized report</li>
+        <li>A leaderboard and an admin console for managing content</li>
+    </ul>
+    <h2 class="h4 mt-4">Project status</h2>
+    <p class="text-muted mb-0">
+        This is a student final-year project. It's built to run locally with zero database setup
+        (SQLite by default) and to deploy to a real host with PostgreSQL when needed.
+    </p>
+</div>
+{% endblock %}

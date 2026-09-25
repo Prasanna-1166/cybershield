@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Incident Response Wizard{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Respond · Step 1</p>
+    <h1 class="h2">I Think I've Been Scammed</h1>
+    <p class="text-muted">What happened? This wizard gives educational guidance only — it does not replace professional or legal advice, and CyberShield does not file any report on your behalf.</p>
+
+    <form method="POST" class="card cs-card mb-4">
+        <div class="card-body p-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <fieldset>
+                <legend class="visually-hidden">What happened?</legend>
+                {% for value, label in step1_options.items() %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="what_happened" id="wh_{{ value }}" value="{{ value }}"
+                           {% if selected == value %}checked{% endif %} required>
+                    <label class="form-check-label" for="wh_{{ value }}">{{ label }}</label>
+                </div>
+                {% endfor %}
+            </fieldset>
+            <button type="submit" class="btn cs-btn-accent mt-3">Continue</button>
+        </div>
+    </form>
+
+    {% if result %}
+    <div class="card cs-card mb-3">
+        <div class="card-body p-4">
+            <p class="cs-section-eyebrow mb-1">Steps 2–4</p>
+            <h2 class="h5">Guidance and urgency</h2>
+
+            <div class="mb-3">
+                <span class="text-muted small">Urgency (educational only, not professional advice):</span>
+                <span class="badge {{ 'bg-danger' if result.urgency == 'URGENT' else ('bg-warning text-dark' if result.urgency == 'MODERATE' else 'bg-success') }}">
+                    {{ result.urgency }}
+                </span>
+            </div>
+
+            {% if result.show_financial_fraud_banner %}
+            <div class="cs-risk-banner risk-high mb-3">
+                <span class="fs-3" aria-hidden="true">🚨</span>
+                <div>
+                    <strong>Financial fraud may be involved.</strong> Contact your bank immediately and call
+                    <strong>{{ helpline }}</strong> (cyber-financial fraud helpline) or visit the
+                    <a href="{{ portal_url }}" target="_blank" rel="noopener">National Cyber Crime Reporting Portal</a>.
+                </div>
+            </div>
+            {% endif %}
+
+            {% if scenario_data %}
+            <p>See full step-by-step guidance: <a href="{{ url_for('help.scenario', scenario_key=result.scenario_key) }}">{{ scenario_data.title }}</a></p>
+            {% endif %}
+
+            <h3 class="h6 text-uppercase text-muted mt-4">Evidence you may need for official reporting</h3>
+            <ul class="mb-0">{% for item in result.evidence_checklist %}<li>{{ item }}</li>{% endfor %}</ul>
+
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                <a href="{{ portal_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">Open Official Cyber Crime Portal</a>
+                <a href="{{ url_for('help.resources') }}" class="btn btn-outline-secondary btn-sm">Official Help Resources</a>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-secondary small">
+        CyberShield does not file a police complaint or a cybercrime report on your behalf.
+        Use the official links above to report directly.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

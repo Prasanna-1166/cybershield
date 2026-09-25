@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}URL Safety Checker{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Detect</p>
+    <h1 class="h2">URL Safety Checker</h1>
+    <p class="text-muted">
+        This educational checker analyzes the URL string only. It does not visit, crawl, resolve,
+        or execute the submitted URL.
+    </p>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="url_text" class="form-label">URL</label>
+        <input type="text" id="url_text" name="url_text" class="form-control mb-3" placeholder="https://example.com/..." value="{{ submitted_url }}">
+        <button type="submit" class="btn cs-btn-accent">Check URL</button>
+    </form>
+
+    {% if result %}
+    <div class="cs-risk-banner risk-{{ result.risk_level|lower }} mt-4">
+        <div>
+            <div class="small text-uppercase fw-bold" style="letter-spacing:0.04em;">Risk Level</div>
+            <div class="fs-4 cs-risk-{{ result.risk_level|lower }}">{{ result.risk_level }}</div>
+        </div>
+        <div class="ms-auto text-end">
+            <div class="small text-muted">Risk score</div>
+            <div class="fs-4 fw-bold">{{ result.score }}</div>
+        </div>
+    </div>
+
+    <div class="card cs-card mt-3">
+        <div class="card-body p-4">
+            {% if result.indicators %}
+            <h2 class="h6 text-uppercase text-muted">Indicators detected</h2>
+            <ul class="cs-indicator-list list-unstyled mb-4">
+                {% for indicator in result.indicators %}<li>{{ indicator }}</li>{% endfor %}
+            </ul>
+            {% endif %}
+
+            <h2 class="h6 text-uppercase text-muted">Explanation</h2>
+            <p>{{ result.explanation }}</p>
+
+            <h2 class="h6 text-uppercase text-muted mt-3">Recommended action</h2>
+            <p class="mb-0">{{ result.recommended_action }}</p>
+        </div>
+    </div>
+
+    {% if result.technical %}
+    <div class="card cs-card mt-3">
+        <div class="card-body p-4">
+            <h2 class="h6 text-uppercase text-muted mb-3">Technical observations</h2>
+            <div class="row row-cols-2 row-cols-md-3 g-3 small">
+                <div class="col"><div class="text-muted">Protocol</div><div class="fw-semibold">{{ result.technical.protocol }}</div></div>
+                <div class="col"><div class="text-muted">Domain</div><div class="fw-semibold text-break">{{ result.technical.domain }}</div></div>
+                <div class="col"><div class="text-muted">Port</div><div class="fw-semibold">{{ result.technical.port }}</div></div>
+                <div class="col"><div class="text-muted">Path</div><div class="fw-semibold text-break">{{ result.technical.path }}</div></div>
+                <div class="col"><div class="text-muted">Subdomain segments</div><div class="fw-semibold">{{ result.technical.subdomain_count }}</div></div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="alert alert-secondary mt-3 small mb-0">{{ result.disclaimer }} This tool never fetches the destination.</div>
+    {% endif %}
+</div>
+{% endblock %}

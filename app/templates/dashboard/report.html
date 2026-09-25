@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Cyber Safety Report{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1 cs-no-print">
+        <div>
+            <p class="cs-section-eyebrow mb-1">Your Report</p>
+            <h1 class="h2 mb-0">Personalized Cyber Safety Report</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('main.report_pdf') }}" class="btn btn-outline-secondary btn-sm">Download PDF</a>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">Print</button>
+        </div>
+    </div>
+    <h1 class="h2 cs-print-only">CyberShield — Personalized Cyber Safety Report</h1>
+    <p class="text-muted">Prepared for {{ current_user.display() }}.</p>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card cs-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="cs-score-ring" style="--cs-score: {{ data.security_score }};">
+                        <div class="cs-score-ring-inner">
+                            <div>
+                                <div class="cs-score-number">{{ data.security_score }}</div>
+                                <div class="cs-score-of">/ 100</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fw-bold mt-3">{{ data.security_score_classification }}</div>
+                    <p class="text-muted small mb-0">Cyber Safety Score</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row g-3 h-100">
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card text-center h-100"><div class="card-body">
+                        <div class="small text-muted">Rank</div>
+                        <div class="fs-6 fw-bold mt-1">{{ data.rank }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card text-center h-100"><div class="card-body">
+                        <div class="small text-muted">Overall Score</div>
+                        <div class="fs-4 fw-bold">{{ data.overall_score }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card text-center h-100"><div class="card-body">
+                        <div class="small text-muted">Accuracy</div>
+                        <div class="fs-4 fw-bold">{{ data.overall_accuracy_percent }}%</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card text-center h-100"><div class="card-body">
+                        <div class="small text-muted">Avg Response</div>
+                        <div class="fs-4 fw-bold">{{ data.avg_response_time_seconds }}s</div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-muted small">
+        <strong>How this score is calculated:</strong> 55% training accuracy, 25% share of levels
+        completed, and 20% assessment improvement (when a Before/After assessment is available;
+        otherwise the first two are re-weighted to still total 100%).
+    </p>
+
+    <div class="card cs-card mb-4 cs-no-print">
+        <div class="card-body p-4">
+            <h2 class="h6 text-uppercase text-muted">Performance by level</h2>
+            <canvas id="perfChart" height="120" role="img" aria-label="Bar chart of accuracy percentage by training level"></canvas>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card cs-card h-100"><div class="card-body p-4">
+                <h2 class="h6 text-uppercase text-muted">Security strengths</h2>
+                <ul class="mb-0">
+                    {% for area in data.strong_areas %}<li>{{ area }}</li>{% else %}<li class="text-muted">Keep training to build strong areas.</li>{% endfor %}
+                </ul>
+            </div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="card cs-card h-100"><div class="card-body p-4">
+                <h2 class="h6 text-uppercase text-muted">Areas needing improvement</h2>
+                <ul class="mb-0">
+                    {% for area in data.weak_areas %}<li>{{ area }}</li>{% else %}<li class="text-muted">No weak areas detected yet.</li>{% endfor %}
+                </ul>
+            </div></div>
+        </div>
+    </div>
+
+    {% if data.recommended_lesson_categories %}
+    <div class="card cs-card mt-3"><div class="card-body p-4">
+        <h2 class="h6 text-uppercase text-muted">Recommended lessons</h2>
+        <ul class="mb-0">
+            {% for cat in data.recommended_lesson_categories %}<li>{{ cat.replace('_', ' ')|title }}</li>{% endfor %}
+        </ul>
+    </div></div>
+    {% endif %}
+
+    {% if data.before_assessment_percent is not none and data.after_assessment_percent is not none %}
+    <div class="card cs-card mt-3"><div class="card-body p-4">
+        <h2 class="h6 text-uppercase text-muted">Before / After Assessment</h2>
+        <p class="mb-0">
+            Before training: <strong>{{ data.before_assessment_percent }}%</strong> &rarr;
+            After training: <strong>{{ data.after_assessment_percent }}%</strong> &rarr;
+            Improvement: <strong>{{ '+' if data.improvement_percent >= 0 else '' }}{{ data.improvement_percent }}%</strong>
+        </p>
+    </div></div>
+    {% endif %}
+
+    <p class="text-muted small mt-4 mb-0">
+        CyberShield is an educational platform. This report reflects in-app training and assessment
+        activity only and is not a professional security audit.
+    </p>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script nonce="{{ csp_nonce() }}">
+const labels = {{ data.per_level_performance | map(attribute='level_name') | list | tojson }};
+const accuracyData = {{ data.per_level_performance | map(attribute='accuracy_percent') | list | tojson }};
+
+new Chart(document.getElementById('perfChart'), {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{ label: 'Accuracy %', data: accuracyData, backgroundColor: '#1f9d8f' }]
+    },
+    options: { scales: { y: { beginAtZero: true, max: 100 } } }
+});
+</script>
+{% endblock %}

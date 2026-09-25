@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1">Community</p>
+    <h1 class="h2 mb-4">Leaderboard</h1>
+    <div class="card cs-card">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr><th>Rank</th><th>Player</th><th>Score</th><th>Accuracy</th><th>Levels</th></tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr class="{{ 'table-active' if current_user.is_authenticated and row.user_id == current_user.id }}">
+                        <td>
+                            {% if row.rank == 1 %}🥇{% elif row.rank == 2 %}🥈{% elif row.rank == 3 %}🥉{% else %}{{ row.rank }}{% endif %}
+                        </td>
+                        <td>{{ row.display_name }}{% if current_user.is_authenticated and row.user_id == current_user.id %} <span class="badge text-bg-secondary">You</span>{% endif %}</td>
+                        <td>{{ row.total_score }}</td>
+                        <td>{{ row.accuracy }}%</td>
+                        <td>{{ row.levels_completed }}/{{ total_levels }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-muted text-center py-4">No scores yet — be the first to play!</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

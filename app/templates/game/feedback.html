@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    {% if result.is_correct %}
+        <div class="cs-risk-banner risk-low mb-4">
+            <span class="fs-3" aria-hidden="true">✅</span>
+            <div>
+                <h2 class="h5 mb-1">Correct — +{{ result.points_awarded }} points</h2>
+                <div class="small text-muted">
+                    {% if result.fast_bonus_applied %}Includes a +10 fast-answer bonus. {% endif %}
+                    {% if result.hint_penalty_applied %}&minus;10 points for using a hint.{% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="cs-risk-banner risk-high mb-4">
+            <span class="fs-3" aria-hidden="true">❌</span>
+            <div>
+                <h2 class="h5 mb-1">Not quite — {{ result.points_awarded }} points</h2>
+                <div class="small text-muted">Review the explanation below before the next challenge.</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card cs-card mb-3">
+        <div class="card-body p-4">
+            <h3 class="h6 text-uppercase text-muted">Security principle</h3>
+            <p>{{ result.correct_explanation }}</p>
+
+            <h3 class="h6 text-uppercase text-muted mt-4">What you should have noticed</h3>
+            <ul class="mb-0">
+                {% for line in result.warning_signs.split('\n') if line.strip() %}
+                <li>{{ line.strip() }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3 class="h6 text-uppercase text-muted mt-4">What to do</h3>
+            <p class="mb-0">{{ result.recommended_action }}</p>
+        </div>
+    </div>
+
+    {% if result.level_completed %}
+        <div class="cs-risk-banner risk-medium mb-3">
+            <span class="fs-3" aria-hidden="true">🎉</span>
+            <div>
+                <strong>Level complete!</strong> +200 bonus points.
+                {% if level.key == 'cyber_escape' %}
+                    <div class="fw-bold mt-1">Cyber Escape successful</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if result.newly_earned_badges %}
+        <div class="cs-risk-banner risk-low mb-3">
+            <span class="fs-3" aria-hidden="true">🏅</span>
+            <div>
+                New badge{{ 's' if result.newly_earned_badges|length > 1 else '' }} earned:
+                {% for badge in result.newly_earned_badges %}
+                    <strong>{{ badge.icon }} {{ badge.name }}</strong>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="d-flex flex-wrap gap-2 mt-2">
+        <a href="{{ url_for('game.play_level', level_number=level.number) }}" class="btn cs-btn-accent">Next challenge</a>
+        <a href="{{ url_for('game.levels') }}" class="btn btn-outline-secondary">Back to levels</a>
+    </div>
+</div>
+{% endblock %}

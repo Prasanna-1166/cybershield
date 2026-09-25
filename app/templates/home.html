@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<section class="cs-hero py-5 py-lg-6">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <p class="cs-section-eyebrow mb-3">Cybersecurity awareness platform</p>
+                <h1 class="display-5 fw-bold mb-3">Think Before You Click.</h1>
+                <p class="fs-5 mb-4" style="color: var(--cs-text-on-dark-muted); max-width: 42rem;">
+                    CyberShield helps you recognize scams, build practical cybersecurity awareness,
+                    and know exactly what to do when something goes wrong.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <a href="{{ url_for('game.levels') }}" class="btn btn-lg cs-btn-accent">Start Learning</a>
+                    <a href="{{ url_for('check.message_analyzer') }}" class="btn btn-lg btn-outline-light">Check a Message</a>
+                    <a href="{{ url_for('check.url_checker') }}" class="btn btn-lg btn-outline-light">Check a URL</a>
+                </div>
+                <p class="small mb-0" style="color: var(--cs-text-on-dark-muted);">
+                    Free. No credit card. Built for students, professionals, and anyone who wants a
+                    sharper eye for scams.
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="row row-cols-2 g-3">
+                    <div class="col cs-stat">
+                        <div class="cs-stat-value">{{ stats.levels }}</div>
+                        <div class="cs-stat-label">Training levels</div>
+                    </div>
+                    <div class="col cs-stat">
+                        <div class="cs-stat-value">{{ stats.challenges }}</div>
+                        <div class="cs-stat-label">Challenges</div>
+                    </div>
+                    <div class="col cs-stat">
+                        <div class="cs-stat-value">{{ stats.lessons }}</div>
+                        <div class="cs-stat-label">Learning-center lessons</div>
+                    </div>
+                    <div class="col cs-stat">
+                        <div class="cs-stat-value">{{ stats.badges }}</div>
+                        <div class="cs-stat-label">Achievement badges</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="text-center cs-max-w-content mx-auto mb-4">
+        <p class="cs-section-eyebrow">How it works</p>
+        <h2 class="h3">Prevent, detect, and respond — in one place</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 cs-card cs-card-hover">
+                <div class="card-body p-4">
+                    <div class="cs-icon-badge mb-3" aria-hidden="true">🛡️</div>
+                    <h3 class="h5">Prevent</h3>
+                    <p class="text-muted mb-3">
+                        Interactive, scenario-based training teaches you to recognize phishing,
+                        suspicious links, weak passwords, and social-engineering tricks before they
+                        catch you off guard.
+                    </p>
+                    <a href="{{ url_for('game.levels') }}" class="fw-semibold">Start training →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 cs-card cs-card-hover">
+                <div class="card-body p-4">
+                    <div class="cs-icon-badge mb-3" aria-hidden="true">🔍</div>
+                    <h3 class="h5">Detect</h3>
+                    <p class="text-muted mb-3">
+                        The Message Analyzer and URL Safety Checker give you an on-demand, rule-based
+                        second opinion — with a clear explanation, not just a verdict — when something
+                        looks suspicious.
+                    </p>
+                    <a href="{{ url_for('check.message_analyzer') }}" class="fw-semibold">Check something →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 cs-card cs-card-hover">
+                <div class="card-body p-4">
+                    <div class="cs-icon-badge mb-3" aria-hidden="true">🚨</div>
+                    <h3 class="h5">Respond</h3>
+                    <p class="text-muted mb-3">
+                        The Cyber Help Center and Incident Response Wizard walk you through exactly
+                        what to do next — securing your accounts and reporting through official
+                        channels.
+                    </p>
+                    <a href="{{ url_for('help.index') }}" class="fw-semibold">Get help →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cs-surface-alt py-5 border-top border-bottom">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <p class="cs-section-eyebrow">Why it matters</p>
+                <h2 class="h3 mb-3">Most people can't spot a realistic scam — until they've seen one</h2>
+                <p class="text-muted mb-0">
+                    Phishing emails, fake bank/KYC alerts, impersonation calls, fake job offers, and
+                    payment scams keep getting more convincing. CyberShield closes two gaps at once:
+                    recognizing a scam attempt in the moment, and knowing the right next step once you
+                    suspect one — with a track record you can see improve over time.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="card cs-card p-3 h-100">
+                            <div class="fw-bold h5 mb-1">Before → After</div>
+                            <p class="text-muted small mb-0">A measured assessment shows your real improvement, not a guess.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card cs-card p-3 h-100">
+                            <div class="fw-bold h5 mb-1">No external APIs</div>
+                            <p class="text-muted small mb-0">Analyzers run locally with transparent rules — your messages are never sent anywhere.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="alert alert-secondary cs-max-w-content mx-auto text-center">
+        <strong>Educational tool only.</strong> CyberShield's analyzers give heuristic guidance, not a
+        definitive verdict. It does not replace law enforcement, your bank, or official government
+        cybercrime services. Never enter real passwords, OTPs, or card numbers anywhere on this site.
+    </div>
+</section>
+{% endblock %}

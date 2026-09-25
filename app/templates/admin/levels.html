@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Manage Levels{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1"><a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none">Admin</a> · Levels</p>
+    <h1 class="h2 mb-4">Levels</h1>
+    <div class="card cs-card">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>#</th><th>Name</th><th>Challenges</th><th>Active</th><th></th></tr></thead>
+                <tbody>
+                    {% for level in levels %}
+                    <tr>
+                        <td>{{ level.number }}</td>
+                        <td class="fw-semibold">{{ level.name }}</td>
+                        <td>{{ level.challenges|length }}</td>
+                        <td>{% if level.is_active %}<span class="badge text-bg-success">Yes</span>{% else %}<span class="badge text-bg-secondary">No</span>{% endif %}</td>
+                        <td><a href="{{ url_for('admin.challenges', level_id=level.id) }}" class="btn btn-sm btn-outline-secondary">View Challenges</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="text-muted small mt-3">
+        New levels and challenges are added via <code>seed/</code> for now — see the project README.
+    </p>
+</div>
+{% endblock %}

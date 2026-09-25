@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Learning Center{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1">Prevent</p>
+    <h1 class="h2">Cyber Safety Learning Center</h1>
+    <p class="text-muted mb-1">Short, focused lessons — what it is, warning signs, a realistic example, and what to do.</p>
+    {% if viewed %}
+    <p class="small text-muted mb-4">You've viewed {{ viewed|length }} of {{ lessons|length }} lessons.</p>
+    {% else %}
+    <div class="mb-4"></div>
+    {% endif %}
+
+    <div class="row g-3">
+        {% for lesson in lessons %}
+        <div class="col-md-4">
+            <a href="{{ url_for('learn.lesson', key=lesson.key) }}" class="text-decoration-none">
+                <div class="card cs-card cs-card-hover h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge text-bg-secondary">{{ lesson.category }}</span>
+                            {% if lesson.key in viewed %}<span class="badge text-bg-success">Viewed</span>{% endif %}
+                        </div>
+                        <div class="fw-semibold" style="color: var(--cs-text);">{{ lesson.title }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

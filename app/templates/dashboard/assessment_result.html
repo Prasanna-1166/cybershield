@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Assessment Result{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 text-center cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Assessment</p>
+    <h1 class="h3">{{ 'Before' if phase == 'before' else 'After' }} Assessment Complete</h1>
+    <div class="cs-score-ring my-4" style="--cs-score: {{ attempt.score_percent }};">
+        <div class="cs-score-ring-inner">
+            <div>
+                <div class="cs-score-number">{{ attempt.score_percent }}%</div>
+            </div>
+        </div>
+    </div>
+    <p class="text-muted">{{ attempt.correct_answers }} of {{ attempt.total_questions }} correct</p>
+    {% if phase == 'before' %}
+    <p class="text-muted small">Complete your training, then take the After Assessment to see your improvement.</p>
+    {% endif %}
+    <a href="{{ url_for('main.dashboard') }}" class="btn cs-btn-accent">Back to Dashboard</a>
+</div>
+{% endblock %}

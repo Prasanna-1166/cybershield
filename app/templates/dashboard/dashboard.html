@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-2">
+        <div>
+            <p class="cs-section-eyebrow mb-1">Your Security Overview</p>
+            <h1 class="h2 mb-0">Welcome back, {{ current_user.display() }}</h1>
+        </div>
+        <span class="cs-rank-pill">{{ report.rank }}</span>
+    </div>
+
+    {% if newly_earned %}
+    <div class="alert alert-success">
+        New badge{{ 's' if newly_earned|length > 1 else '' }} unlocked:
+        {% for badge in newly_earned %}<strong>{{ badge.icon }} {{ badge.name }}</strong>{% if not loop.last %}, {% endif %}{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card cs-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="cs-score-ring" style="--cs-score: {{ report.security_score }};">
+                        <div class="cs-score-ring-inner">
+                            <div>
+                                <div class="cs-score-number">{{ report.security_score }}</div>
+                                <div class="cs-score-of">/ 100</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fw-bold mt-3">{{ report.security_score_classification }}</div>
+                    <p class="text-muted small mb-0">Cyber Safety Score</p>
+                    <p class="text-muted small mt-2 mb-0">
+                        Blended from training accuracy, levels completed, and assessment improvement.
+                        <a href="{{ url_for('main.report') }}">See the full breakdown →</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="row g-3 h-100">
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">XP / Total Score</div>
+                        <div class="fs-3 fw-bold">{{ score.total_score if score else 0 }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">Accuracy</div>
+                        <div class="fs-3 fw-bold">{{ score.accuracy_percent if score else 0 }}%</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">Level</div>
+                        <div class="fs-3 fw-bold">{{ score.current_level_number if score else 1 }}/{{ report.total_levels }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">Badges</div>
+                        <div class="fs-3 fw-bold">{{ earned_badges|length }}/{{ all_badges|length }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">Current Streak</div>
+                        <div class="fs-3 fw-bold">{{ score.current_streak if score else 0 }}</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card cs-card h-100"><div class="card-body text-center">
+                        <div class="small text-muted">Best Streak</div>
+                        <div class="fs-3 fw-bold">{{ score.best_streak if score else 0 }}</div>
+                    </div></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card cs-card h-100"><div class="card-body">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Progress to {{ report.rank_progress.next_name or 'top rank' }}</span>
+                            <span class="fw-semibold">{{ report.rank_progress.percent_to_next }}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar cs-progress" style="width: {{ report.rank_progress.percent_to_next }}%"></div>
+                        </div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card cs-card mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Training Progress</h2>
+                    {% for level in levels %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="fw-semibold">Level {{ level.number }}: {{ level.name }}</span>
+                            <span class="text-muted">{{ 'Completed' if score and level.number < score.current_level_number else ('In progress' if score and level.number == score.current_level_number else 'Locked') }}</span>
+                        </div>
+                        <div class="progress" style="height: 7px;">
+                            <div class="progress-bar cs-progress" style="width: {{ 100 if score and level.number < score.current_level_number else (50 if score and level.number == score.current_level_number else 0) }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card cs-card mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Before vs After</h2>
+                    {% if before and after %}
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="text-center">
+                            <div class="text-muted small">Before Training</div>
+                            <div class="fs-4 fw-bold">{{ before.score_percent }}%</div>
+                        </div>
+                        <div class="fs-4 text-muted">→</div>
+                        <div class="text-center">
+                            <div class="text-muted small">After Training</div>
+                            <div class="fs-4 fw-bold">{{ after.score_percent }}%</div>
+                        </div>
+                        <div class="fs-4 text-muted">→</div>
+                        <div class="text-center">
+                            <div class="text-muted small">Improvement</div>
+                            <div class="fs-4 fw-bold {{ 'text-success' if improvement and improvement >= 0 else 'text-danger' }}">
+                                {{ '+' if improvement and improvement >= 0 else '' }}{{ improvement }} pts
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-2">
+                        Take the <a href="{{ url_for('main.assessment', phase='before') }}">Before Assessment</a> now,
+                        then the <a href="{{ url_for('main.assessment', phase='after') }}">After Assessment</a> once
+                        you've completed training, to see a real, measured improvement.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card cs-card h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h6 text-uppercase text-muted">Security Strengths</h2>
+                            {% if report.strong_areas %}
+                            <ul class="mb-0 ps-3">
+                                {% for area in report.strong_areas %}<li>{{ area }}</li>{% endfor %}
+                            </ul>
+                            {% else %}
+                            <p class="text-muted small mb-0">Keep training — strong areas appear here once you're scoring 90%+ in a level.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card cs-card h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h6 text-uppercase text-muted">Areas Needing Improvement</h2>
+                            {% if report.weak_areas %}
+                            <ul class="mb-0 ps-3">
+                                {% for area in report.weak_areas %}<li>{{ area }}</li>{% endfor %}
+                            </ul>
+                            {% else %}
+                            <p class="text-muted small mb-0">No weak areas detected yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card cs-card mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Quick Actions</h2>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('game.levels') }}" class="btn cs-btn-accent">Continue Training</a>
+                        <a href="{{ url_for('check.message_analyzer') }}" class="btn btn-outline-secondary">Analyze a Message</a>
+                        <a href="{{ url_for('check.url_checker') }}" class="btn btn-outline-secondary">Check a URL</a>
+                        <a href="{{ url_for('help.index') }}" class="btn btn-outline-secondary">I Need Cyber Help</a>
+                        <a href="{{ url_for('main.report') }}" class="btn btn-outline-secondary">View Full Report</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card cs-card">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Recent Achievements</h2>
+                    <div class="row row-cols-3 g-2">
+                        {% for badge in all_badges %}
+                        <div class="col">
+                            <div class="cs-badge-tile {{ '' if badge.id in earned_badge_ids else 'locked' }}" title="{{ badge.description }}">
+                                <span class="cs-badge-icon" aria-hidden="true">{{ badge.icon }}</span>
+                                <div class="small fw-semibold">{{ badge.name }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if not earned_badges %}
+                    <p class="text-muted small mt-3 mb-0">No badges yet — start training to unlock your first one.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

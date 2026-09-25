@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Official Resources{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width: 760px;">
+    <h1>Official Resources</h1>
+    <p class="text-muted small">
+        Official procedures and contact information may change. Use the official
+        government resource for the latest instructions.
+    </p>
+
+    <div class="card cs-card mb-3">
+        <div class="card-body">
+            <span class="badge bg-secondary mb-2">Official External Resource</span>
+            <h2 class="h5">National Cyber Crime Reporting Portal (India)</h2>
+            <p>Report suspicious website URLs, phone numbers, email IDs, messaging identifiers, SMS identifiers, and social-media URLs.</p>
+            <a href="{{ portal_url }}" target="_blank" rel="noopener" class="btn cs-btn-accent btn-sm">Open Official Cyber Crime Portal</a>
+        </div>
+    </div>
+
+    <div class="card cs-card mb-3">
+        <div class="card-body">
+            <span class="badge bg-secondary mb-2">Official External Resource</span>
+            <h2 class="h5">Cyber-financial fraud helpline</h2>
+            <p>Call immediately if you've lost money in an online/financial scam — time matters for reversing transactions.</p>
+            <div class="fs-3 fw-bold">{{ helpline }}</div>
+        </div>
+    </div>
+
+    <div class="alert alert-secondary">
+        CyberShield is an educational platform. It does not replace law enforcement, your bank,
+        or official government services, and it never files a report on your behalf — the links
+        above take you directly to the real, official resource.
+    </div>
+</div>
+{% endblock %}

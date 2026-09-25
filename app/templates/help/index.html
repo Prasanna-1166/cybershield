@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}I Need Cyber Help{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <p class="cs-section-eyebrow mb-1">Respond</p>
+    <h1 class="h2">I Need Cyber Help</h1>
+    <p class="text-muted mb-4">Pick what happened. Each page gives clear, step-by-step next steps — immediate action, account protection, evidence to keep, and where to officially report it.</p>
+
+    <div class="row g-3">
+        {% for key, title in scenarios %}
+        <div class="col-md-6">
+            <a href="{{ url_for('help.scenario', scenario_key=key) }}" class="text-decoration-none">
+                <div class="card cs-card cs-card-hover h-100">
+                    <div class="card-body p-4 d-flex align-items-center gap-3">
+                        <div class="cs-icon-badge flex-shrink-0" aria-hidden="true">🛟</div>
+                        <span class="fw-semibold" style="color: var(--cs-text);">{{ title }}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 d-flex flex-wrap gap-2">
+        <a href="{{ url_for('help.wizard') }}" class="btn cs-btn-accent">I Think I've Been Scammed →</a>
+        <a href="{{ url_for('help.resources') }}" class="btn btn-outline-secondary">Official Resources</a>
+    </div>
+</div>
+{% endblock %}

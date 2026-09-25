@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Level {{ level.number }}{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5 cs-max-w-content">
+    <p class="cs-section-eyebrow mb-1">Training Simulation</p>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h1 class="h4 mb-0">Level {{ level.number }}: {{ level.name }}</h1>
+        <span class="badge text-bg-secondary">Challenge {{ challenge_number }} of {{ total_challenges }}</span>
+    </div>
+    <div class="progress mb-4" style="height: 6px;">
+        <div class="progress-bar cs-progress" style="width: {{ (challenge_number / total_challenges * 100) | round }}%"></div>
+    </div>
+
+    <div class="card cs-card mb-3">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center small text-muted mb-3">
+                <span class="text-uppercase" style="letter-spacing: 0.04em;">{{ challenge.scenario_type }}</span>
+                <span id="timer" class="cs-timer" aria-live="polite">
+                    <span aria-hidden="true">⏱</span> <span id="timer-seconds">{{ challenge.time_limit_seconds }}</span>s
+                </span>
+            </div>
+            <pre class="cs-scenario-box p-3 mb-3">{{ challenge.prompt }}</pre>
+            <p class="fw-semibold fs-5">{{ challenge.question_text }}</p>
+
+            <form method="POST" action="{{ url_for('game.answer', challenge_id=challenge.id) }}" id="answer-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="used_hint" id="used_hint" value="0">
+                <fieldset>
+                    <legend class="visually-hidden">Answer choices</legend>
+                    {% for option in challenge.options %}
+                    <div class="form-check mb-2 p-2 rounded">
+                        <input class="form-check-input" type="radio" name="option_id" id="opt{{ option.id }}" value="{{ option.id }}" required>
+                        <label class="form-check-label" for="opt{{ option.id }}">{{ option.text }}</label>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="submit" class="btn cs-btn-accent">Submit Answer</button>
+                    <button type="button" class="btn btn-outline-secondary" id="hint-btn" data-url="{{ url_for('game.hint', challenge_id=challenge.id) }}">
+                        Use Hint (&minus;10 pts)
+                    </button>
+                </div>
+                <div id="hint-text" class="alert alert-info mt-3 d-none" role="status"></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script nonce="{{ csp_nonce() }}">
+document.addEventListener("DOMContentLoaded", () => {
+    // Visual countdown only — doesn't auto-submit, keeps the learner in
+    // control rather than force-submitting on their behalf.
+    let seconds = parseInt(document.getElementById("timer-seconds").textContent, 10);
+    const timerEl = document.getElementById("timer-seconds");
+    const interval = setInterval(() => {
+        seconds -= 1;
+        if (seconds <= 0) {
+            timerEl.textContent = "0";
+            timerEl.parentElement.classList.add("text-danger");
+            clearInterval(interval);
+        } else {
+            timerEl.textContent = seconds;
+        }
+    }, 1000);
+
+    document.getElementById("hint-btn").addEventListener("click", async (e) => {
+        const btn = e.currentTarget;
+        const resp = await fetch(btn.dataset.url);
+        const data = await resp.json();
+        const hintBox = document.getElementById("hint-text");
+        hintBox.textContent = data.hint;
+        hintBox.classList.remove("d-none");
+        document.getElementById("used_hint").value = "1";
+        btn.disabled = true;
+    });
+});
+</script>
+{% endblock %}

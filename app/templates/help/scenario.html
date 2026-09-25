@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ data.title }}{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width: 760px;">
+    <a href="{{ url_for('help.index') }}" class="small">&larr; All Cyber Help topics</a>
+    <h1 class="mt-2">{{ data.title }}</h1>
+
+    {% if data.urgent %}
+    <div class="alert alert-danger fw-semibold">
+        Time matters here — see "When to contact the organization" below and act quickly.
+    </div>
+    {% endif %}
+
+    <div class="card cs-card mb-3">
+        <div class="card-body">
+            <h2 class="h6">What may have happened</h2>
+            <p>{{ data.what_happened }}</p>
+
+            <h2 class="h6">Immediate steps</h2>
+            <ol>{% for step in data.immediate_steps %}<li>{{ step }}</li>{% endfor %}</ol>
+
+            <h2 class="h6">What NOT to do</h2>
+            <ul>{% for item in data.what_not_to_do %}<li>{{ item }}</li>{% endfor %}</ul>
+
+            {% if data.account_safety_steps %}
+            <h2 class="h6">Account / device safety steps</h2>
+            <ul>{% for item in data.account_safety_steps %}<li>{{ item }}</li>{% endfor %}</ul>
+            {% endif %}
+
+            <h2 class="h6">When to contact the organization</h2>
+            <p>{{ data.when_to_contact_org }}</p>
+
+            <h2 class="h6">When to report</h2>
+            <p class="mb-0">{{ data.when_to_report }}</p>
+        </div>
+    </div>
+
+    <div class="card cs-card">
+        <div class="card-body">
+            <h2 class="h6">Official resources</h2>
+            <p class="small text-muted mb-2">
+                Official procedures and contact information may change. Use the official
+                government resource for the latest instructions.
+            </p>
+            <a href="{{ portal_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">
+                Open Official Cyber Crime Portal <span class="badge bg-secondary">Official External Resource</span>
+            </a>
+            <div class="mt-2 small">Cyber-financial fraud helpline: <strong>{{ helpline }}</strong></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
