@@ -22,5 +22,5 @@ reportlab==5.0.1
 #
 # Uncomment ONE of these if you set DATABASE_URL to point at a real
 # database server instead of SQLite:
-psycopg2-binary==2.9.9      # PostgreSQL (recommended for production)
+psycopg[binary]==3.2.10     # PostgreSQL (recommended for production)
 # PyMySQL==1.1.1              # MySQL, if you already have one set up
